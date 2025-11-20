@@ -6,35 +6,134 @@
 /*   By: vebastos <vebastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 16:03:35 by vebastos          #+#    #+#             */
-/*   Updated: 2025/11/19 18:31:47 by vebastos         ###   ########.fr       */
+/*   Updated: 2025/11/20 20:43:16 by vebastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+int  newline_index(char *s)
+{
+    int i = 0;
+    if (!s)
+        return -1;
+    while (s[i])
+    {
+        if (s[i] == '\n')
+            return i;
+        i++;
+    }
+    return -1;
+}
+
 char	*read_line(int fd, char *stash)
 {
-	printf("fd: %d\n", fd);
-	printf("stash: %s\n", stash);
+    char	*buf;
+    char	*temp;
+    int		bytes;
 
-	return ("Test");
+    buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+    if (!buf)
+        return (NULL);
+    while (newline_index(stash) == -1)
+    {
+        bytes = read(fd, buf, BUFFER_SIZE);
+        if (bytes <= 0)
+            break;
+        buf[bytes] = '\0';
+        if (!stash)
+            stash = ft_strdup(buf);
+        else
+        {
+            temp = ft_strjoin(stash, buf);
+            free(stash);
+            stash = temp;
+        }
+    }
+    free(buf);
+    return (stash);
+}
+char	*extract_line(char *stash)
+{
+	char	*buf;
+	int		i;
+	int		j;
+
+	if (!stash)
+        return NULL;
+	i = newline_index(stash);
+	if (i == -1)
+    	i = ft_strlen(stash) - 1;
+	buf = ft_calloc(i + 2, sizeof(char));
+	if (!buf)
+		return (NULL);
+	j = 0;
+	while (j <= i)
+	{
+		buf[j] = stash[j];
+		j++;
+	}
+	buf[j] = '\0';
+	return (buf);
+};
+
+char	*update_stash(char *stash)
+{
+	char	*buf;
+	int		i;
+	int		j;
+
+	if (!stash)
+        return NULL;
+	i = newline_index(stash);
+    if (i == -1)
+    {
+        free(stash);
+        return NULL;
+    };
+	i++;
+	buf = ft_calloc(ft_strlen(stash) - i + 1, sizeof(char));
+	if (!buf)
+		return (NULL);
+	j = 0;
+	while (stash[i])
+		buf[j++] = stash[i++];
+	buf[j] = '\0';
+	free(stash);
+	return (buf);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*stash = "";
+	static char	*stash;
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	line = read_line(fd, stash);
+	stash = read_line(fd, stash);
+	if (!stash)
+		return (NULL);
+	line = extract_line(stash);
+	stash = update_stash(stash);
 	return (line);
 }
 
-int	main(void)
+int main(void)
 {
-	int 	fd = open("text.txt", O_RDONLY);
+    int fd = open("text.txt", O_RDONLY);
+    if (fd < 0)
+    {
+        perror("open");
+        return 1;
+    }
 
-	get_next_line(fd);
-	return (0);
+    char *line;
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        printf("Line: %s", line); // already includes '\n' if present
+        free(line);
+    }
+
+    close(fd);
+    return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: vebastos <vebastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 14:34:01 by vebastos          #+#    #+#             */
-/*   Updated: 2025/11/19 18:27:05 by vebastos         ###   ########.fr       */
+/*   Updated: 2025/11/20 20:43:44 by vebastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,14 @@
 # include <stdio.h>
 
 char	*get_next_line(int fd);
+char	*ft_strdup(const char *s);
+char	*extract_line(char *stash);
+char	*update_stash(char *stash);
+char	*read_line(int fd, char *stash);
+char	*ft_calloc(size_t nmemb, size_t size);
+char	*ft_strjoin(char const *s1, char const *s2);
+int  	newline_index(char *s);
+int	    found_newline(char *s, int c);
+size_t	ft_strlen(const char *str);
 
 #endif
