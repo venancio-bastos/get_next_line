@@ -6,7 +6,7 @@
 /*   By: vebastos <vebastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 16:03:35 by vebastos          #+#    #+#             */
-/*   Updated: 2025/11/20 20:43:16 by vebastos         ###   ########.fr       */
+/*   Updated: 2025/11/21 14:17:50 by vebastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,31 +77,33 @@ char	*extract_line(char *stash)
 	return (buf);
 };
 
-char	*update_stash(char *stash)
+char *update_stash(char *stash)
 {
-	char	*buf;
-	int		i;
-	int		j;
+    int		i;
+    char	*newstash;
+    int 	j;
 
-	if (!stash)
-        return NULL;
 	i = newline_index(stash);
     if (i == -1)
     {
         free(stash);
         return NULL;
-    };
-	i++;
-	buf = ft_calloc(ft_strlen(stash) - i + 1, sizeof(char));
-	if (!buf)
-		return (NULL);
+    }
+    newstash = ft_calloc(ft_strlen(stash) - i, 1);
+    if (!newstash)
+    {
+        free(stash);
+        return NULL;
+    }
+    i++;
 	j = 0;
-	while (stash[i])
-		buf[j++] = stash[i++];
-	buf[j] = '\0';
-	free(stash);
-	return (buf);
+    while (stash[i])
+        newstash[j++] = stash[i++];
+
+    free(stash);
+    return newstash;
 }
+
 
 char	*get_next_line(int fd)
 {
@@ -130,7 +132,7 @@ int main(void)
     char *line;
     while ((line = get_next_line(fd)) != NULL)
     {
-        printf("Line: %s", line); // already includes '\n' if present
+        printf("Line: %s", line);
         free(line);
     }
 
