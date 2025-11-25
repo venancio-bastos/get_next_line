@@ -6,7 +6,7 @@
 /*   By: vebastos <vebastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 16:03:35 by vebastos          #+#    #+#             */
-/*   Updated: 2025/11/25 17:40:02 by vebastos         ###   ########.fr       */
+/*   Updated: 2025/11/25 23:42:24 by vebastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,15 @@ char	*read_line(int fd, char *stash)
 	char	*temp;
 	int		bytes;
 
+	bytes = 1;
 	buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buf)
 		return (NULL);
-	while (newline_index(stash) == -1)
+	while (newline_index(stash) == -1 && bytes > 0)
 	{
 		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes <= 0)
-			break ;
+		if (bytes < 0)
+			return (free(buf), free(stash), NULL);
 		buf[bytes] = '\0';
 		if (!stash)
 			stash = ft_strdup(buf);
@@ -62,7 +63,7 @@ char	*extract_line(char *stash)
 	int		i;
 	int		j;
 
-	if (!stash)
+	if (!stash || stash[0] == '\0')
 		return (NULL);
 	i = newline_index(stash);
 	if (i == -1)
@@ -83,8 +84,8 @@ char	*extract_line(char *stash)
 char	*update_stash(char *stash)
 {
 	int		i;
-	char	*newstash;
 	int		j;
+	char	*newstash;
 
 	i = newline_index(stash);
 	if (i == -1)
@@ -92,7 +93,7 @@ char	*update_stash(char *stash)
 		free(stash);
 		return (NULL);
 	}
-	newstash = ft_calloc(ft_strlen(stash) - i + 1, 1);
+	newstash = ft_calloc(ft_strlen(stash) - i, 1);
 	if (!newstash)
 	{
 		free(stash);
@@ -117,6 +118,12 @@ char	*get_next_line(int fd)
 	if (!stash[fd])
 		return (NULL);
 	line = extract_line(stash[fd]);
+	if (!line)
+	{
+		free(stash[fd]);
+		stash[fd] = NULL;
+		return (NULL);
+	}
 	stash[fd] = update_stash(stash[fd]);
 	if (stash[fd] && !stash[fd][0])
 	{

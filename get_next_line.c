@@ -6,7 +6,7 @@
 /*   By: vebastos <vebastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 16:03:35 by vebastos          #+#    #+#             */
-/*   Updated: 2025/11/25 18:48:33 by vebastos         ###   ########.fr       */
+/*   Updated: 2025/11/25 23:52:43 by vebastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,15 @@ char	*read_line(int fd, char *stash)
 	char	*temp;
 	int		bytes;
 
+	bytes = 1;
 	buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buf)
 		return (NULL);
-	while (newline_index(stash) == -1)
+	while (newline_index(stash) == -1 && bytes > 0)
 	{
 		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes <= 0)
-			break ;
+		if (bytes < 0)
+			return (free(buf), free(stash), NULL);
 		buf[bytes] = '\0';
 		if (!stash)
 			stash = ft_strdup(buf);
@@ -117,6 +118,12 @@ char	*get_next_line(int fd)
 	if (!stash)
 		return (NULL);
 	line = extract_line(stash);
+	if (!line)
+	{
+		free(stash);
+		stash = NULL;
+		return (NULL);
+	}
 	stash = update_stash(stash);
 	if (stash && !stash[0])
 	{
