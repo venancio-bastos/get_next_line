@@ -6,33 +6,29 @@
 /*   By: vebastos <vebastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 14:33:37 by vebastos          #+#    #+#             */
-/*   Updated: 2025/11/24 15:10:31 by vebastos         ###   ########.fr       */
+/*   Updated: 2025/11/25 13:32:18 by vebastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
-void    *ft_calloc(size_t nmemb, size_t size)
+void	*ft_calloc(size_t nmemb, size_t size)
 {
-    size_t  total;
-    char    *out;
-    size_t  i;
+	size_t	total;
+	char	*out;
+	size_t	i;
 
-    total = nmemb * size;
-    if (nmemb != 0 && total / nmemb != size)
-        return (NULL);
-
-    out = malloc(total);
-    if (!out)
-        return (NULL);
-
-    i = 0;
-    while (i < total)
-        out[i++] = 0;
-
-    return (out);
+	total = nmemb * size;
+	if (nmemb != 0 && total / nmemb != size)
+		return (NULL);
+	out = malloc(total);
+	if (!out)
+		return (NULL);
+	i = 0;
+	while (i < total)
+		out[i++] = 0;
+	return (out);
 }
-
 
 char	*ft_strdup(const char *s)
 {
@@ -84,8 +80,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 size_t	ft_strlen(const char *str)
 {
 	size_t	i;
+
 	if (!str)
-        return (0);
+		return (0);
 	i = 0;
 	while (str[i])
 		i++;
